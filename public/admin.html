@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sweeper Cleaning Services admin dashboard for bookings and contacts." />
+  <title>Admin | Sweeper Cleaning Services</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div class="page-loader">
+  <div class="loader-logo">🧹 Sweeper</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<a href="https://wa.me/919876543210" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🧹</div>
+    Sweeper<span>.</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="booking.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <div class="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<section class="section">
+  <div class="text-center reveal">
+    <div class="section-label">🔐 Admin Panel</div>
+    <h2 class="section-title">View <span>Bookings</span> & Contacts</h2>
+    <p class="section-sub">This page loads the admin API records saved by the booking and contact forms.</p>
+  </div>
+
+  <div class="admin-actions reveal" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:34px;">
+    <button id="loadBookings" class="btn btn-primary">Load Bookings</button>
+    <button id="loadContacts" class="btn btn-outline">Load Contacts</button>
+  </div>
+
+  <div id="adminMessage" class="admin-message" style="text-align:center;max-width:760px;margin:0 auto 30px;color:var(--text-dark);"></div>
+  <div id="adminContent" class="compare-table reveal" style="overflow-x:auto;"></div>
+</section>
+
+<footer class="footer" style="padding-top:40px;">
+  <div class="footer-bottom" style="text-align:center;padding-top:18px;">
+    <p>Admin dashboard for local use. Protect these routes in production.</p>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  const adminMessage = document.getElementById('adminMessage');
+  const adminContent = document.getElementById('adminContent');
+
+  function showAdminMessage(text, type = 'info') {
+    adminMessage.textContent = text;
+    adminMessage.style.color = type === 'error' ? '#c53030' : '#1a2632';
+  }
+
+  function formatDate(value) {
+    try {
+      return new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+    } catch {
+      return value || '-';
+    }
+  }
+
+  function renderBookings(bookings) {
+    if (!bookings.length) {
+      adminContent.innerHTML = '<p style="padding:24px;color:var(--text-light);">No bookings recorded yet.</p>';
+      return;
+    }
+
+    const rows = bookings.map(b => `
+      <tr>
+        <td>${b.id}</td>
+        <td>${b.name}</td>
+        <td>${b.phone}</td>
+        <td>${b.plan}</td>
+        <td>${b.timing}</td>
+        <td>${b.status}</td>
+        <td>${formatDate(b.createdAt)}</td>
+      </tr>
+    `).join('');
+
+    adminContent.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Plan</th>
+            <th>Timing</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  function renderContacts(contacts) {
+    if (!contacts.length) {
+      adminContent.innerHTML = '<p style="padding:24px;color:var(--text-light);">No contacts recorded yet.</p>';
+      return;
+    }
+
+    const rows = contacts.map(c => `
+      <tr>
+        <td>${c.id}</td>
+        <td>${c.name}</td>
+        <td>${c.email || '-'}</td>
+        <td>${c.phone || '-'}</td>
+        <td>${c.subject}</td>
+        <td>${c.message}</td>
+        <td>${c.status}</td>
+        <td>${formatDate(c.createdAt)}</td>
+      </tr>
+    `).join('');
+
+    adminContent.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Received</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  async function fetchAdmin(path, renderFn, listName) {
+    showAdminMessage('Loading ' + listName + '...');
+    adminContent.innerHTML = '';
+
+    try {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'Failed to load data');
+      renderFn(json.data || []);
+      showAdminMessage(`Loaded ${json.count || 0} ${listName}.`, 'info');
+    } catch (err) {
+      showAdminMessage('Unable to load ' + listName + '. Open the server and ensure it is running locally.', 'error');
+      adminContent.innerHTML = `<p style="padding:24px;color:#c53030;">${err.message}</p>`;
+    }
+  }
+
+  document.getElementById('loadBookings').addEventListener('click', () => {
+    fetchAdmin('/api/admin/bookings', renderBookings, 'bookings');
+  });
+
+  document.getElementById('loadContacts').addEventListener('click', () => {
+    fetchAdmin('/api/admin/contacts', renderContacts, 'contacts');
+  });
+
+  // Auto-load bookings on open
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loadBookings').click();
+  });
+</script>
+</body>
+</html>

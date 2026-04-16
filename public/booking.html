@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Book a cleaning service with Sweeper - Quick and easy 2-minute form." />
+  <title>Book Now | Sweeper Cleaning Services</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div class="page-loader">
+  <div class="loader-logo">🧹 Sweeper</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<a href="https://wa.me/919876543210" target="_blank" class="wa-float" title="Chat on WhatsApp">💬</a>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🧹</div>
+    Sweeper<span>.</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="booking.html" class="nav-cta active">Book Now</a></li>
+  </ul>
+  <div class="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="page-hero">
+  <h1>Book a Cleaning</h1>
+  <p>Fill in your details and we'll get back to you within 1 hour</p>
+</div>
+
+<!-- Booking Section -->
+<section class="section">
+  <div class="booking-wrapper">
+    <!-- Info -->
+    <div class="booking-info reveal">
+      <div class="section-label">📋 Quick Booking</div>
+      <h2>Start Your <span style="color:var(--primary)">Clean Home</span> Journey</h2>
+      <p>Fill out the form and we'll reach out to you via WhatsApp to confirm your booking and assign the best maid for your home.</p>
+
+      <div class="booking-feature">
+        <div class="bf-icon">⚡</div>
+        <div>
+          <h4>Instant Confirmation</h4>
+          <p>You'll receive a WhatsApp confirmation within 1 hour of submitting the form.</p>
+        </div>
+      </div>
+
+      <div class="booking-feature">
+        <div class="bf-icon">✅</div>
+        <div>
+          <h4>Verified Maids</h4>
+          <p>We assign only background-checked, trained professionals to your home.</p>
+        </div>
+      </div>
+
+      <div class="booking-feature">
+        <div class="bf-icon">🔄</div>
+        <div>
+          <h4>Replacement Guarantee</h4>
+          <p>Not satisfied? We'll replace your maid within 24 hours at no extra cost.</p>
+        </div>
+      </div>
+
+      <div class="booking-feature">
+        <div class="bf-icon">💰</div>
+        <div>
+          <h4>No Advance Payment</h4>
+          <p>No upfront payment required. Pay only after you're satisfied with the first session.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;padding:24px;background:var(--primary-light);border-radius:var(--radius)">
+        <h4 style="margin-bottom:8px">💬 Prefer WhatsApp?</h4>
+        <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:16px">Chat directly with our team for instant assistance.</p>
+        <a href="https://wa.me/919876543210?text=Hi! I'd like to book a cleaning service." target="_blank" class="btn btn-wa" style="font-size:0.9rem">
+          💬 Chat Now on WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="reveal">
+      <div class="booking-form">
+        <h3 style="font-size:1.4rem;margin-bottom:8px">Booking Form</h3>
+        <p style="color:var(--text-light);font-size:0.88rem;margin-bottom:28px">All fields marked with <span style="color:#ef4444">*</span> are required.</p>
+
+        <form id="bookingForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name <span>*</span></label>
+              <input type="text" id="name" placeholder="e.g. Rahul Sharma" required />
+            </div>
+            <div class="form-group">
+              <label>Phone Number <span>*</span></label>
+              <input type="tel" id="phone" placeholder="+91 98765 43210" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Full Address <span>*</span></label>
+            <input type="text" id="address" placeholder="House No., Street, Area, City" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Service Plan <span>*</span></label>
+              <select id="plan" required>
+                <option value="">Select a Plan</option>
+                <option value="Basic Plan - ₹3,999/month">Basic — ₹3,999/month</option>
+                <option value="Standard Plan - ₹6,999/month">Standard — ₹6,999/month</option>
+                <option value="Premium Plan - ₹11,999/month">Premium — ₹11,999/month</option>
+                <option value="One-time Deep Clean">One-time Deep Clean</option>
+                <option value="Custom / Ask Me">Custom / Not Sure Yet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred Start Time <span>*</span></label>
+              <select id="timing" required>
+                <option value="">Select Timing</option>
+                <option value="7:00 AM - 9:00 AM">7:00 AM – 9:00 AM</option>
+                <option value="9:00 AM - 11:00 AM">9:00 AM – 11:00 AM</option>
+                <option value="11:00 AM - 1:00 PM">11:00 AM – 1:00 PM</option>
+                <option value="2:00 PM - 4:00 PM">2:00 PM – 4:00 PM</option>
+                <option value="4:00 PM - 6:00 PM">4:00 PM – 6:00 PM</option>
+                <option value="Flexible">Flexible / Any Time</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Home Size</label>
+            <select>
+              <option value="">Select Home Size</option>
+              <option value="1 BHK">1 BHK</option>
+              <option value="2 BHK">2 BHK</option>
+              <option value="3 BHK">3 BHK</option>
+              <option value="4+ BHK">4+ BHK / Villa</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea id="message" placeholder="Any special requirements, pets at home, specific cleaning areas, etc."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;padding:16px">
+            <span>Book Now via WhatsApp</span> <span>→</span>
+          </button>
+
+          <p style="text-align:center;font-size:0.8rem;color:var(--text-light);margin-top:14px">
+            🔒 Your information is safe and will never be shared with third parties.
+          </p>
+        </form>
+
+        <!-- Success Message -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">🎉</div>
+          <h3>Booking Submitted!</h3>
+          <p>Thank you! We're redirecting you to WhatsApp to confirm your booking. Our team will reach out within 1 hour.</p>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="index.html" class="btn btn-outline">← Back to Home</a>
+            <a href="https://wa.me/919876543210" target="_blank" class="btn btn-wa">💬 Open WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-text">🧹 Sweeper</div>
+      <p>Professional home cleaning services with verified maids.</p>
+      <div class="social-links">
+        <div class="social-link">📘</div>
+        <div class="social-link">📸</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+919876543210">📞 +91 98765 43210</a></li>
+        <li><a href="https://wa.me/919876543210">💬 WhatsApp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Sweeper Cleaning Services. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+// Pre-select plan from URL
+const params = new URLSearchParams(window.location.search);
+const plan = params.get('plan');
+if (plan) {
+  const planSelect = document.getElementById('plan');
+  for (const opt of planSelect.options) {
+    if (opt.text.toLowerCase().includes(plan.toLowerCase())) {
+      opt.selected = true;
+      break;
+    }
+  }
+}
+</script>
+</body>
+</html>
