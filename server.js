@@ -1,9 +1,5 @@
 /**
  * SWEEPER CLEANING SERVICES - Backend Server
- * Node.js + Express
- * 
- * Run: npm install && node server.js
- * Open: http://localhost:3000
  */
 
 const express = require('express');
@@ -17,9 +13,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Basic security headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -28,11 +21,10 @@ app.use((req, res, next) => {
 });
 
 // ==================== DATA STORAGE ====================
-// Simple JSON file storage — replace with a real database (MongoDB/MySQL) for production
 const DATA_FILE = path.join(__dirname, 'data', 'bookings.json');
 const CONTACTS_FILE = path.join(__dirname, 'data', 'contacts.json');
 
-// Ensure data directory exists
+// Ensure data folder exists
 if (!fs.existsSync(path.join(__dirname, 'data'))) {
   fs.mkdirSync(path.join(__dirname, 'data'));
 }
@@ -40,8 +32,7 @@ if (!fs.existsSync(path.join(__dirname, 'data'))) {
 function readData(file) {
   try {
     if (!fs.existsSync(file)) return [];
-    const raw = fs.readFileSync(file, 'utf8');
-    return JSON.parse(raw);
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch {
     return [];
   }
@@ -51,12 +42,16 @@ function saveData(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
+// ==================== ROOT CHECK ====================
+app.get('/', (req, res) => {
+  res.send("Sweeper API is running 🚀");
+});
+
 // ==================== BOOKING API ====================
 app.post('/api/booking', (req, res) => {
   try {
     const { name, phone, address, plan, timing, message } = req.body;
 
-    // Validation
     if (!name || !phone || !address || !plan || !timing) {
       return res.status(400).json({ success: false, error: 'Missing required fields.' });
     }
@@ -81,16 +76,13 @@ app.post('/api/booking', (req, res) => {
     bookings.push(booking);
     saveData(DATA_FILE, bookings);
 
-    console.log(`✅ New Booking [${booking.id}]:`, booking.name, '-', booking.plan);
-
     return res.json({
       success: true,
-      message: 'Booking received! Redirecting to WhatsApp...',
+      message: 'Booking received!',
       bookingId: booking.id,
     });
   } catch (err) {
-    console.error('Booking error:', err);
-    return res.status(500).json({ success: false, error: 'Server error. Please try again.' });
+    return res.status(500).json({ success: false, error: 'Server error.' });
   }
 });
 
@@ -100,7 +92,7 @@ app.post('/api/contact', (req, res) => {
     const { name, email, phone, subject, message } = req.body;
 
     if (!name || !message) {
-      return res.status(400).json({ success: false, error: 'Name and message are required.' });
+      return res.status(400).json({ success: false, error: 'Name and message required.' });
     }
 
     const contact = {
@@ -118,78 +110,51 @@ app.post('/api/contact', (req, res) => {
     contacts.push(contact);
     saveData(CONTACTS_FILE, contacts);
 
-    console.log(`📩 New Contact [${contact.id}]:`, contact.name, '-', contact.subject);
-
-    return res.json({ success: true, message: 'Message received! We\'ll get back to you soon.' });
+    return res.json({ success: true });
   } catch (err) {
-    console.error('Contact error:', err);
-    return res.status(500).json({ success: false, error: 'Server error. Please try again.' });
+    return res.status(500).json({ success: false });
   }
 });
 
-// ==================== ADMIN API ====================
-// Simple admin dashboard to view bookings (protect this with auth in production)
+// ==================== ADMIN APIs ====================
 app.get('/api/admin/bookings', (req, res) => {
   const bookings = readData(DATA_FILE);
-  res.json({ success: true, count: bookings.length, data: bookings.reverse() });
+  res.json({ success: true, data: bookings.reverse() });
 });
 
 app.get('/api/admin/contacts', (req, res) => {
   const contacts = readData(CONTACTS_FILE);
-  res.json({ success: true, count: contacts.length, data: contacts.reverse() });
+  res.json({ success: true, data: contacts.reverse() });
 });
 
-// Update booking status
 app.patch('/api/admin/bookings/:id', (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-    const bookings = readData(DATA_FILE);
-    const idx = bookings.findIndex(b => b.id === id);
-    if (idx === -1) return res.status(404).json({ success: false, error: 'Booking not found' });
-    bookings[idx].status = status;
-    bookings[idx].updatedAt = new Date().toISOString();
-    saveData(DATA_FILE, bookings);
-    res.json({ success: true, data: bookings[idx] });
-  } catch (err) {
-    res.status(500).json({ success: false, error: 'Server error' });
+  const bookings = readData(DATA_FILE);
+  const idx = bookings.findIndex(b => b.id === req.params.id);
+
+  if (idx === -1) {
+    return res.status(404).json({ success: false });
   }
+
+  bookings[idx].status = req.body.status;
+  saveData(DATA_FILE, bookings);
+
+  res.json({ success: true });
 });
 
-// ==================== HEALTH CHECK ====================
+// ==================== HEALTH ====================
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok' });
 });
 
-// ==================== ADMIN PAGE ROUTES ====================
-app.get(['/admin', '/admin.html', '/admin.html/*', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
+// ==================== STATIC FILES (AFTER API) ====================
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ==================== FALLBACK ====================
-// All other routes serve index.html (SPA-friendly)
 app.get('*', (req, res) => {
-  const file = req.path.replace(/^\//, '') || 'index.html';
-  const fullPath = path.join(__dirname, 'public', file);
-
-  if (fs.existsSync(fullPath) && file.endsWith('.html')) {
-    res.sendFile(fullPath);
-  } else {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ==================== START SERVER ====================
 app.listen(PORT, () => {
-  console.log('');
-  console.log('🧹 ===================================');
-  console.log('🧹  SWEEPER CLEANING SERVICES');
-  console.log('🧹 ===================================');
-  console.log(`🌐  Website: http://localhost:${PORT}`);
-  console.log(`📋  Bookings API: http://localhost:${PORT}/api/admin/bookings`);
-  console.log(`📩  Contacts API: http://localhost:${PORT}/api/admin/contacts`);
-  console.log('🧹 ===================================');
-  console.log('');
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-module.exports = app;
