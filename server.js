@@ -5,9 +5,13 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ==================== CORS (VERY IMPORTANT) ====================
+app.use(cors());
 
 // ==================== MIDDLEWARE ====================
 app.use(express.json());
@@ -146,7 +150,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// ==================== STATIC FILES (AFTER API) ====================
+// ==================== STATIC FILES ====================
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ==================== FALLBACK ====================
